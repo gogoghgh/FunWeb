@@ -52,7 +52,7 @@ public class MemberDAO {
 	
 	
 
-	// 회원가입 - insertMember(MB)
+	// 1. 회원가입 - insertMember(MB)
 	public void insertMember(MemberBean mb) {
 
 		try {
@@ -84,7 +84,7 @@ public class MemberDAO {
 			// 4. sql 실행
 			pstmt.executeUpdate();
 
-			System.out.println(" DAO : 회원가입 성공 ");
+			System.out.println(" DAO_1.insertMember : 회원가입 성공 ");
 
 		} catch (ClassNotFoundException e) {
 			System.out.println(" 드라이버 로드 실패! ");
@@ -112,10 +112,10 @@ public class MemberDAO {
 		
 		
 	}
-	// 회원가입 - insertMember(MB)
+	// 1. 회원가입 - insertMember(MB)
 
 	
-	// 로그인여부체크 시작 - loginMember(MB)
+	// 2. 로그인여부체크 시작 - loginMember(MB)
 	public int loginMember(MemberBean mb) {
 		// 1 - 로그인, 0 - 비밀번호 오류, -1 - 아이디오류
 		int result = -1;
@@ -150,7 +150,7 @@ public class MemberDAO {
 				result = -1;
 			}
 			
-			System.out.println(" DAO : 로그인 체크 완료 ("+result+")");
+			System.out.println(" DAO_2.loginMember : 로그인 체크 완료 ("+result+")");
 			
 
 		} catch (ClassNotFoundException e) {
@@ -167,10 +167,10 @@ public class MemberDAO {
 		
 		return result;
 	}
-
-	// 로그인여부체크 끝 - loginMember(MB)
+	// 2. 로그인여부체크 끝 - loginMember(MB)
 	
-	// 회원정보 조회 - getMember(id)
+	
+	// 3. 회원정보 조회 - getMember(id)
 	public MemberBean getMember(String id){
 		// 회원정보를 저장할 객체
 		 MemberBean mb = new MemberBean();
@@ -201,11 +201,11 @@ public class MemberDAO {
 				mb.setEmail(rs.getString("email"));
 				mb.setRegdate(rs.getTimestamp("regdate"));
 				
-				System.out.println(" DAO : 회원정보 저장 완료 ");
+				System.out.println(" DAO_3.getMember : 회원정보 저장 완료 ");
 			}
 			
-			System.out.println(" DAO : 조회된 회원정보 ");
-			System.out.println(" DAO : "+ mb.toString());
+			System.out.println(" DAO_3.getMember : 조회된 회원정보 ");
+			System.out.println(" DAO_3.getMember : "+ mb.toString());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -216,9 +216,10 @@ public class MemberDAO {
 		return mb;
 		
 	}
-	// 회원정보 조회 - getMember(id)
+	// 3. 회원정보 조회 - getMember(id)
 	
-	// 정보 수정메서드(이름,나이,성별,이메일) - updateMember(MB)
+	
+	// 4. 정보 수정메서드(이름,나이,성별,이메일) - updateMember(MB)
 	public int updateMember(MemberBean mb){
 		// 수정결과 : 1 수정성공, 0 수정실패(비밀번호), -1 수정실패(비회원)
 		int result = -1;
@@ -247,22 +248,20 @@ public class MemberDAO {
 					// 회원,비밀번호 동일=>본인
 					
 					// 3. sql (update) & pstmt
-					// 특정 사용자의 정보(이름,나이,성별,이메일)을 수정
-					sql = "update itwill_member set name=?,age=?,gender=?,email=? where id=?";
+					// 특정 사용자의 정보(이름, 이메일)을 수정
+					sql = "update itwill_member set name=?, email=? where id=?";
 					pstmt = con.prepareStatement(sql);
 					
 					// ????
 					pstmt.setString(1, mb.getName());
-					pstmt.setInt(2,mb.getAge());
-					pstmt.setString(3, mb.getGender());
-					pstmt.setString(4, mb.getEmail());
-					pstmt.setString(5, mb.getId());
+					pstmt.setString(2, mb.getEmail());
+					pstmt.setString(3, mb.getId());
 					
 					// 4. sql 실행
 					pstmt.executeUpdate();
 					
 					result = 1;
-					System.out.println("DAO : 정보 수정 완료!");
+					System.out.println("DAO_4.updateMember : 정보 수정 완료!");
 					
 				}else{
 					// 회원, 비밀번호 오류
@@ -273,7 +272,7 @@ public class MemberDAO {
 				result = -1;
 			}
 			
-			System.out.println(" DAO : 디비동작 처리 끝(수정처리)("+result+")");
+			System.out.println(" DAO_4 : 디비동작 처리 끝(수정처리)("+result+")");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -283,11 +282,10 @@ public class MemberDAO {
 		
 		return result;
 	}
-	// 정보 수정메서드(이름,나이,성별,이메일) - updateMember(MB)'
+	// 4. 정보 수정메서드(이름,나이,성별,이메일) - updateMember(MB)'
 	
 	
-	
-	// 정보 삭제 메서드 deleteMember(id,pw)
+	// 5. 정보 삭제 메서드 deleteMember(id,pw)
 	public int deleteMember(String id,String pw){
 		int result =-1;
 		
@@ -316,7 +314,7 @@ public class MemberDAO {
 					
 					// 4. sql 실행	
 					result = pstmt.executeUpdate();
-					System.out.println("DAO : 회원삭제완료! ");
+					System.out.println("DAO_5 : 회원삭제완료! ");
 					//result = 1;
 				}else{
 					// 비밀번호 오류
@@ -327,7 +325,7 @@ public class MemberDAO {
 				result = -1;
 			}
 			
-			System.out.println(" DAO : 삭제 정보("+result+")");
+			System.out.println(" DAO_5 : 삭제 정보("+result+")");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -335,13 +333,12 @@ public class MemberDAO {
 			closeDB();
 		}
 		
-		
 		return result;
 	}
+	// 5. 정보 삭제 메서드 deleteMember(id,pw) 끝
 	
-	// 정보 삭제 메서드 deleteMember(id,pw)
 	
-	// 전체 회원정보 조회 getMemberList()
+	// 6. 전체 회원정보 조회 getMemberList()
 	public ArrayList<MemberBean> getMemberList(){
 		
 		// 회원목록 전체를 저장하는 가변길이 배열
@@ -375,8 +372,8 @@ public class MemberDAO {
 				memberList.add(mb);				
 			}
 			
-			System.out.println(" DAO : 회원 목록 조회 성공 ");
-			System.out.println(" DAO : "+memberList.size() );
+			System.out.println(" DAO_6 : 회원 목록 조회 성공 ");
+			System.out.println(" DAO_6 : "+memberList.size() );
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -386,7 +383,7 @@ public class MemberDAO {
 		
 		return memberList;
 	}
-	// 전체 회원정보 조회 getMemberList()
+	// 6. 전체 회원정보 조회 getMemberList()
 	
 	
 

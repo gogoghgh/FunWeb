@@ -48,7 +48,8 @@ public class MemberFrontController extends HttpServlet {
 			
 			// 이동 완?? ㄴㄴㄴ 아직 안 갔고,, 티켓만 만들었음!!!
 			// 이동하러 3단계로 고고
-		}// if ---  /MemberInsert.me  --- 패턴1
+		}// MemberInsert.me 끝 
+		
 		else if(command.equals("/MemberInsertAction.me")){
 			// ★★ 패턴2 ★★
 			System.out.println("(from MemberFrontController_doProcess) C: /MemberInsertAction.bo 호출");
@@ -69,7 +70,8 @@ public class MemberFrontController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}// else if --- /MemberInsertAction.me --- 패턴2
+		}// MemberInsertAction.me 끝
+		
 		else if(command.equals("/MemberIdCheck.me")){
 			// ★★ 패턴2 ★★ ????
 			System.out.println("(from MemberFrontController_doProcess) C: /MemberIdCheck.me 호출");
@@ -88,7 +90,8 @@ public class MemberFrontController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}// else if --- /MemberIdCheck.me끝
+		}// MemberIdCheck.me 끝
+		
 		else if(command.equals("/MemberLogin.me")){
 			// 패턴1   // 패턴 1일 때는 여기서 forward에 저장하구나~~~ 
 			System.out.println("(from MemberFrontController_doProcess) C: /MemberLogin.me 주소 호출됨");
@@ -102,7 +105,8 @@ public class MemberFrontController extends HttpServlet {
 			// 이동 완?? ㄴㄴㄴ 아직 안 갔고,, 티켓만 만들었음!!!
 			// 이동하러 3단계로 고고
 			
-		}// else if --- /MemberLogin.me끝
+		} // MemberLogin.me 끝
+		
 		else if(command.equals("/MemberLoginAction.me")){
 			// ★★ 패턴2 ★★
 			System.out.println("(from MemberFrontController_doProcess) C: /MemberLoginAction.me 호출");
@@ -118,7 +122,8 @@ public class MemberFrontController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}// else if --- /MemberLoginAction.me끝
+		}// MemberLoginAction.me끝
+		
 		else if(command.equals("/Main.me")){
 			//패턴1.. 페이지 보여주기만,,^^
 			System.out.println("(from MemberFrontController_doProcess) C: /Main.me 주소 호출됨");
@@ -127,7 +132,8 @@ public class MemberFrontController extends HttpServlet {
 			forward = new ActionForward();
 			forward.setPath("./main/main.jsp");
 			forward.setRedirect(false); // jsp 파일로 이동하니까 forward방식.. 주소 변화 X
-		}
+		} // Main.me 끝
+		
 		else if(command.equals("/MemberLogout.me")){
 			System.out.println("(from MemberFrontController_doProcess) C: /MemberLogout.me 호출");
 			System.out.println("(from MemberFrontController_doProcess) C: DB 작업 X + 페이지 이동 O");
@@ -141,8 +147,37 @@ public class MemberFrontController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		} // MemberLogout.me 끝
 		
+		else if(command.equals("/MemberUpdate.me")){
+			// update 작업 하기 전에, 내 정보 가져다가(select) 화면에 뿌려주는 작업부터!!! (DB 사용 O)
+			System.out.println("(from MemberFrontController_doProcess) C: /MemberUpdate.me 호출");
+			System.out.println("(from MemberFrontController_doProcess) C: DB 작업 O + 페이지 이동 O");
+			
+			action = new MemberUpdate();
+			
+			try {
+				forward = action.execute(request, response);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				
+			}
+			
+		} // MemberUpdate.me 끝
+		
+		else if(command.equals("/MemberUpdateAction.me")){
+			System.out.println("(from MemberFrontController_doProcess) C: /MemberUpdateAction.me 호출");
+			System.out.println("(from MemberFrontController_doProcess) C: DB 작업 O + 페이지 이동 O");
+			
+			action = new MemberUpdateAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} // MemberUpdateAction.me
 		
 		System.out.println("2. 가상 주소 매핑 끝-------------------------------------------\n");
 		
@@ -166,7 +201,7 @@ public class MemberFrontController extends HttpServlet {
 				
 			}
 		}
-		System.out.println("3. 가상 주소 이동 끝----------------------------------------------------\n\n");
+		System.out.println("3. 가상 주소 이동 끝----------------------------------------------------\n\n\n");
 		
 		
 	} // doProcess
@@ -175,12 +210,14 @@ public class MemberFrontController extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("------------------------------------------------------------------------------------------------------");
 		System.out.println("(from MemberFrontController_doGet) get방식 호출 - doGet() 실행");
 		doProcess(request, response);
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("------------------------------------------------------------------------------------------------------");
 		System.out.println("(from MemberFrontController_doPost) post방식 호출 - doPost() 실행");
 		doProcess(request, response);
 	}
