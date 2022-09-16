@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>	
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>notice.jsp</title>
+<title>write.jsp</title>
 <link href="./css/default.css" rel="stylesheet" type="text/css">
 <link href="./css/subpage.css" rel="stylesheet" type="text/css">
 <!--[if lt IE 9]>
@@ -48,57 +47,52 @@
 
 		<!-- 게시판 -->
 		<article>
-			<h1>Notice</h1>
-			<table id="notice">
-				<tr>
-					<th class="tno">No.</th>
-					<th class="ttitle">Title</th>
-					<th class="twrite">Writer</th>
-					<th class="tdate">Date</th>
-					<th class="tread">Read</th>
-				</tr>
-				
-				<c:forEach var="dto" items="${boardList }">
+			<h1>Notice Write</h1>
+			<form action="./BoardWriteAction.bo" method="get">
+										<input type="hidden" name="pass" value="1234">
+				<table id="notice">
 					<tr>
-						<td>${dto.bno }</td>
-						<td class="left"><a href="./BoardContent.bo?bno=${dto.bno }"> ${dto.subject } </a></td>
-						<td>${dto.name }</td>
-						<td><fmt:formatDate value="${dto.date }" pattern="yyyy.MM.dd"/> </td>
-						<td>${dto.readcount }</td>
-					</tr>					
-				</c:forEach>
-				
-			</table>
-			
-			<div id="table_search">
-				<input type="text" name="search" class="input_box"> 
-				<input type="button" value="search" class="btn">
-			</div>
-			
-			<!---------------------------------- 페이징 처리 ----------------------------------------->
-			<div class="clear"></div>
-			<div id="page_control">
-				
-				<c:if test="${startPage gt pageBlock }">
-							<!-- startPage가 10보다 크면?! Prev 글자 보이게-->
-					<a href="./BoardList.bo?pageNum=${startPage - pageBlock }">Prev</a> 
-				</c:if>
-				
-				
-				<c:forEach var="i" begin="${startPage }" end="${endPage }" step="1">
-					<a href="./BoardList.bo?pageNum=${i }">${i }</a>
-				</c:forEach>
+						<td>글쓴이</td>
+						<td>${dto.name } </td>
+					</tr>
+					<tr>
+						<td>글 쓴 날짜</td>
+						<td>${dto.date } </td>
+					</tr>
+					<tr>
+						<td>조회수</td>
+						<td>${dto.readcount } </td>
+					</tr>
+					<tr>
+						<td>제목</td>
+						<td>${dto.subject } </td>
+					</tr>
+					<tr>
+						<td>내용</td>
+						<td>${dto.content } </td>
+					</tr>
 
-				 
-				<c:if test="${endPage gt pageCount }">
-							<!-- endPage가 pageCount보다 더 크면? 다음에 넘어갈 페이지가 있다~ == Next 보여야 함 -->
-					<a href="./BoardList.bo?pageNum=${startPage + pageBlock }">Next</a> 
-				</c:if>
-			</div>
-			
-			
+				</table>
+				
+				<div id = "table_search">
+					<c:if test="${sessionScope.loginID eq dto.name }">
+						<!-- 로그인 한 사람이랑 글쓴이가 일치하면~ ★★★★★★  -->
+						<input type="button" value="글 수정" class="btn" 
+								onclick="location.href='./BoardUpdate.bo?bno=${dto.bno}';">
+												
+						<input type="button" value="글 삭제" class="btn" 
+								onclick="location.href='./BoardDelete.bo?bno=${dto.bno}';">
+					</c:if>
+						<!-- 자기 글이든 아니든 글 목록 버튼은 다 보이게^^ -->
+						<input type="button" value="글 목록" class="btn" onclick="location.href='./BoardList.bo';">
+				</div>
+				
+			</form>
+			<div class="clear"></div>
+			<div id="page_control"></div>
 		</article>
 		<!-- 게시판 -->
+		
 		<!-- 본문들어가는 곳 -->
 		<div class="clear"></div>
 		
