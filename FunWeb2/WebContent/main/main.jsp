@@ -8,23 +8,31 @@
 <link href="./css/default.css" rel="stylesheet" type="text/css">
 <link href="./css/front.css" rel="stylesheet" type="text/css">
 
-<!--[if lt IE 9]>
-<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js" type="text/javascript"></script>
-<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/ie7-squish.js" type="text/javascript"></script>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
-<![endif]-->
-
-<!--[if IE 6]>
- <script src="../script/DD_belatedPNG_0.0.8a.js"></script>
- <script>
-   /* EXAMPLE */
-   DD_belatedPNG.fix('#wrap');
-   DD_belatedPNG.fix('#main_img');   
-
- </script>
- <![endif]-->
-
-
+<script type="text/javascript" src="./script/jquery-3.6.0.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.brown').click(function(){
+// 			alert('정상동작합니다^^');
+		 // $.ajax(); // ajax함수 호출할거~
+			$.ajax({
+				url:'./BoardListMain.bo',
+				dataType:'json', // json 데이터 타입의 글^^ // 게시판 글 5개 들고올 거
+				success:function(rData){
+					// 성공적으로 json 데이터 들고 오면~ 그걸 rData에 담아서 5번 반복 시키기 -> 테이블에 뿌려줄 거~~
+					$.each(rData, function(index, item){
+						$('table').append( // 줄바꿈 안되네 ㄱ-
+						'<tr><td class="contxt"><a href="#">' + item.subject + '</a></td><td>'+item.date+'</td></tr>');
+					});// each
+				}// success 
+			});// ajax
+			$(this).unbind(); // ajax 한번만 불러오고 끝낼 수 있도록 ^^
+			
+		});// click
+		
+		
+		
+	}); //jQuery ready
+</script>
 </head>
 <body>
 	<div id="wrap">
@@ -78,7 +86,7 @@
 			<div id="news_notice">
 				<h3 class="brown">News &amp; Notice</h3>
 				<table>
-					<tr>
+<!--				<tr>
 						<td class="contxt"><a href="#">Vivans....</a></td>
 						<td>2012.11.02</td>
 					</tr>
@@ -97,12 +105,16 @@
 					<tr>
 						<td class="contxt"><a href="#">Vivans....</a></td>
 						<td>2012.11.02</td>
-					</tr>
+					</tr> -->
 				</table>
 			</div>
 		</article>
+		
+		
 		<!-- 메인 콘텐츠 들어가는 곳 -->
 		<div class="clear"></div>
+		
+		
 		<!-- 푸터들어가는 곳 (inc/bottom.jsp 파일로 뗐음) -->
 		<jsp:include page="../inc/bottom.jsp"/>
 		<!-- 푸터들어가는 곳 -->

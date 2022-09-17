@@ -73,7 +73,61 @@ public class BoardFrontController extends HttpServlet{
 				e.printStackTrace();
 			}
 			
-		}
+		}// BoardList.bo 끝
+		
+		else if(command.equals("/BoardListMain.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: BoardListMain.bo 호출");
+			
+			action = new BoardListMainAction();
+			
+			try {
+				forward = action.execute(request, response);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}// BoardListMain.bo 끝
+		
+		else if(command.equals("/BoardContent.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: BoardContent.bo 호출");
+			
+			action = new BoardContentAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}// BoardContent.bo 끝
+		
+		else if(command.equals("/BoardUpdate.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: BoardUpdate.bo 호출");
+			
+			action = new BoardUpdateAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}// BoardUpdate.bo 끝
+		
+		else if(command.equals("/BoardUpdateProAction.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: BoardUpdateProAction.bo 호출");
+			
+			action = new BoardUpdateProAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
+		}// BoardUpdateProAction.bo 끝
 		
 		
 		
