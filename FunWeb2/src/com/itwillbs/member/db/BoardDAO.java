@@ -505,5 +505,220 @@ public class BoardDAO {
 	// 6. 글 정보 수정 updateBoard(dto) 메서드 끝 ////////////////////////////////////////////////////////
 	
 	
+	// 댓글 구현 //////////////////////////////////////////////////////////////
+	// 7. getOne(bno) 메서드  comment 테이블의 bno로 데이터 한 개 가져오기 
+	public CommentDTO getOneComment(int bno) {
+		System.out.println("(from BoardDAO_7.getOneComment) getOneComment 메서드 호출됨");
+		
+		CommentDTO cdto = new CommentDTO();
+		
+		try {
+			// 1+2.   +6
+			con = getConnect();
+			
+			// 3. sql & pstmt & ?
+			sql = "select * from board_comment where bno=?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, bno);
+			
+			// 4. sql 실행 & rs에 담기
+			rs = pstmt.executeQuery();
+			
+			// 5. rs에 담긴 데이터 처리
+			if (rs.next()){
+				
+				cdto.setBno(rs.getInt("bno"));
+				cdto.setB_bno(rs.getInt("b_bno"));
+				cdto.setName(rs.getString("name"));
+				cdto.setContent(rs.getString("content"));
+				cdto.setDate(rs.getTimestamp("date"));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+		return cdto;
+	}
+	// 7. getOneComment(bno) 메서드  comment 테이블의 bno로 데이터 한 개 가져오기 끝
+	
+	// 7-1. updateComment
+	public void updateComment(CommentDTO cdto) {
+		System.out.println("(from BoardDAO_7-1.updateComment) updateComment 메서드 호출됨");
+		
+		try {
+			// 1+2.   +6
+			con = getConnect();
+			
+			// 3. sql & pstmt & ?
+			sql = "update board_comment "
+					+ "set name=?, content=?, where bno=?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, cdto.getName());
+			pstmt.setString(2, cdto.getContent());
+			pstmt.setInt(3, cdto.getBno());
+			
+			// 4. sql 실행
+			pstmt.executeUpdate();
+			
+			System.out.println("(from BoardDAO_7-1.updateComment) 댓글 수정 완 " + cdto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+	}
+	// 7-1. updateComment 끝
+	
+	
+	// 7-2. deleteComment
+	public void deleteComment(int bno) {
+		System.out.println("(from BoardDAO_7-2.deleteComment) deleteComment 메서드 호출됨");
+		
+		try {
+			// 1+2.   +6
+			con = getConnect();
+			
+			// 3. sql & pstmt & ?
+			sql = "delete from board_comment "
+					+ "where bno=?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, bno);
+			
+			// 4. sql 실행
+			pstmt.executeUpdate();
+			
+			System.out.println("(from BoardDAO_7-2.deleteComment) 댓글 삭제 완 bno:" + bno);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+	}
+	// 7-2. deleteComment 끝
+	
+	
+	// 7-3. insertComment
+	public void insertComment(CommentDTO cdto) {
+		System.out.println("(from BoardDAO_7-3.insertComment) insertComment 메서드 호출됨");
+		
+		try {
+			// 1+2.   +6
+			con = getConnect();
+			
+			// 3. sql & pstmt & ?
+			sql = "insert into board_comment (name, content, b_bno) "
+					+ "values(?, ?, ?)";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, cdto.getName());
+			pstmt.setString(2, cdto.getContent());
+			pstmt.setInt(3, cdto.getB_bno());
+			
+			// 4. sql 실행
+			pstmt.executeUpdate();
+			
+			System.out.println("(from BoardDAO_7-3.insertComment) 댓글 추가 완 " + cdto);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+	}
+	// 7-3. insertComment 끝
+	
+	
+	// 7-4. getCommentCount 한 게시물의 댓글 개수 구하는 메서어드
+	public int getCommentCount(int bno){
+		int cnt = 0;
+		
+		try {
+			// 1+2.  6.
+			con = getConnect();
+			
+			// 3. sql & pstmt & ?
+			sql = "select count(*) from board_comment where b_bno=?"; // board Table의 bno에 속한 -> comment Table의 bno니까,,
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, bno);
+			
+			// 4. sql 실행 + rs에 담기
+			rs = pstmt.executeQuery();
+			
+			// 5. rs에 담긴 데이터 처리
+			if(rs.next()){
+				cnt = rs.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+		
+		System.out.println("(from BoardDAO_7-4.getCommentCount) C: 덧글 개수는 총 " + cnt + "개^^");
+		return cnt;
+		
+	}
+	// 7-4. getCommentCount 한 게시물의 댓글 개수 구하는 메서어드 끝
+	
+	
+	// 7-5. getCommentList 한 게시물의 댓글 리스트 출력하는 메서드
+	public List<CommentDTO> getCommentList(int b_bno){
+		System.out.println("\n(from BoardDAO_7-5.getCommentList) C: getCommentList() 호출됨");
+
+		List<CommentDTO> cmtList = new ArrayList<CommentDTO>();
+		
+		try {
+			// 1+2
+			con = getConnect();
+
+			// 3 sql & pstmt & ?
+			sql = "select * from board_comment where b_bno=? order by bno desc";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, b_bno);
+			
+			// 4 sql 실행 & 날려서 가져온 결과값 rs에 담기
+			rs = pstmt.executeQuery();
+			
+			// 5 데이터 처리
+			while(rs.next()){
+				// 이 정보를 바로 배열로는 못 넣고,, DB에 저장된 정보 -> DTO 필통에 저장해서!! -> List에 저장 
+				CommentDTO cdto = new CommentDTO();
+				cdto.setBno(rs.getInt("bno"));
+				cdto.setB_bno(rs.getInt("b_bno"));
+				cdto.setName(rs.getString("name"));
+				cdto.setContent(rs.getString("content"));
+				cdto.setDate(rs.getTimestamp("date"));
+				
+				// DTO필통을 -> List에 저장쓰
+				cmtList.add(cdto);
+				
+			} // while
+			System.out.println("(from BoardDAO_7-5.getCommentList) List에 저장 완");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			// 6
+			closeDB();
+		}
+		
+		return cmtList;
+		
+	}	
+	// 7-5. getCommentList 한 게시물의 댓글 리스트 출력하는 메서드 끝
+	
 	
 }// BoardDAO class

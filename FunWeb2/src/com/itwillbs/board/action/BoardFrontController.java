@@ -126,11 +126,24 @@ public class BoardFrontController extends HttpServlet{
 				e.printStackTrace();
 			}
 			
-			
 		}// BoardUpdateProAction.bo 끝
 		
+		// 댓글 구현 시작////////////////////////////////////////
+		else if (command.equals("/CommentWrite.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: /CommentWrite.bo 호출");
+			
+			action = new CommentWriteAction();
+			
+			try {
+				forward = action.execute(request, response);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		} // CommentWrite.bo
 		
-		
+		// 댓글 구현 끝////////////////////////////////////////
 		
 		System.out.println("\n3. 가상 주소 이동 시작-------------------------------------------------");
 		if(forward != null){

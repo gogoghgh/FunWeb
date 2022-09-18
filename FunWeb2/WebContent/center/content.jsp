@@ -1,27 +1,18 @@
+<%@page import="com.itwillbs.member.db.CommentDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>write.jsp</title>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js"></script>
+
 <link href="./css/default.css" rel="stylesheet" type="text/css">
 <link href="./css/subpage.css" rel="stylesheet" type="text/css">
-<!--[if lt IE 9]>
-<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js" type="text/javascript"></script>
-<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/ie7-squish.js" type="text/javascript"></script>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
-<![endif]-->
-<!--[if IE 6]>
- <script src="../script/DD_belatedPNG_0.0.8a.js"></script>
- <script>
-   /* EXAMPLE */
-   DD_belatedPNG.fix('#wrap');
-   DD_belatedPNG.fix('#main_img');   
 
- </script>
- <![endif]-->
 </head>
 <body>
 	<div id="wrap">
@@ -48,8 +39,8 @@
 		<!-- 게시판 -->
 		<article>
 			<h1>Notice Write</h1>
-			<form action="./BoardWriteAction.bo" method="get">
-										<input type="hidden" name="pass" value="1234">
+<!-- 			<form action="./BoardWriteAction.bo" method="get"> -->
+<!-- 										<input type="hidden" name="pass" value="1234"> -->
 				<table id="notice">
 					<tr>
 						<td>글쓴이</td>
@@ -86,6 +77,87 @@
 						<!-- 자기 글이든 아니든 글 목록 버튼은 다 보이게^^ -->
 						<input type="button" value="글 목록" class="btn" onclick="location.href='./BoardList.bo';">
 				</div>
+				<br>
+				<br>
+				
+				<!-- ----------------------- 댓글 작성 구간^^ --------------------------------- -->
+				
+				<!-- 댓글 수정, 삭제를 위하여 기존 값을 form 태그로 넘김 -->
+<!-- 				<script type="text/javascript">
+					function displaySet(exe, bno, name, cmtContent, cmd){
+						// js: displaySet의 exe, bno, name, cmtContent, cmd 값을 받아 form태그로 넘긴다
+						obj = document.frm;
+						obj.bno.value = bno;
+						obj.exe.value = exe; // exe: 2(댓글 수정), 3(댓글 삭제)
+						obj.name.value = name;
+						
+						while(cmtContent.indexOf("<br>") != -1){
+							cmtContent = cmtContent.replace("<br>", "\n");
+						}
+						obj.cmtContent.value = cmtContent;
+						obj.cmd.value = cmd;
+					}
+				
+				</script> -->
+
+				<form action="./CommentWrite.bo" method="post" name="frm" >
+					<!-- 댓글 수정, 삭제를 위한,, 파라메타.... -->
+<!-- 					<input type="hidden" name="bno" value="1"> 댓글 수정, 삭제할 때 js 함수에서 value 변경,, -->
+<!-- 					<input type="hidden" name="exe" value="1"> exe:1(댓글 추가) -->
+					<input type="hidden" name="pageNum" value="${pageNum }"> <!-- 굳이 필요한감? -->
+					<input type="hidden" name="b_bno" value="${dto.bno }">  <!-- b_bno : 메인 글의 bno!! (BoardDTO의 bno!!!!) -->
+					
+					<table>
+						<tr>
+							<th colspan="2"> 댓글</th>
+						</tr>
+						<tr>
+							<td width="100"> 이름 </td>
+							<td width="150"> <input type="text" name="name"> </td>
+						</tr>
+						<tr>
+							<td> 내용 </td>
+							<td> <textarea rows="5" cols="60" name="content"></textarea> </td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<input type="submit" value="댓글 작성" name="cmd">
+								<input type="reset" value="리셋">
+							</td>
+						</tr>
+					</table>
+				</form>
+				<!-- ----------------------- 댓글 작성 구간 끝^^ --------------------------------- -->
+				
+				
+				
+				<!-- ----------------------- 댓글 리스트 구간 --------------------------------- -->
+				<c:forEach var="cdto" items="${cmtList }">
+					<div class="cmtList">
+						<span class="bno">bno: ${cdto.bno }</span>
+						<span class="name">name: ${cdto.name }</span>
+						<span class="content">content: ${cdto.content }</span>
+						<input type="button" value="수정" onclick="location.href='#';">
+						<input type="button" value="삭제" onclick="location.href='#';">
+						
+<%-- 						<c:set var="cmtContent" value="${cdto.content }"/> --%>
+<%-- 						<c:set var="cmtContent" value="${fn:replace(cmtContent,rn,'<br>') }" /> --%>
+<!-- 						<span class="update"> -->
+<%-- 							<a href="javascript:displaySet(2, '${cdto.bno }', '${cdto.name }', '${cmtContent }', '수정')">수정</a> --%>
+<%-- 							<a href="javascript:displaySet(3, '${cdto.bno }', '${cdto.name }', '${cmtContent }', '삭제')">삭제</a> --%>
+<!-- 						</span> -->
+<!-- 					</div> -->
+<!-- 					<div style="padding-top: 10px;"> -->
+<%-- 						${cmtContent }  <!-- request.getAttribute("cmtList"); --> --%>
+<!-- 					</div> -->
+<%-- 						<span class="content">content: ${cdto.content }</span> --%>
+<%-- 						<span class="date">date: ${cdto.date }</span> --%>
+					</div>
+				</c:forEach>
+				
+				<!-- ----------------------- 댓글 리스트 구간 끝^^ --------------------------------- -->
+				
+				
 				
 			</form>
 			<div class="clear"></div>

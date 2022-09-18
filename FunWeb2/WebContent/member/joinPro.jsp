@@ -1,3 +1,5 @@
+<%-- 
+
 <%@page import="com.itwillbs.member.db.MemberBean"%>
 <%@page import="com.itwillbs.member.db.MemberDAO"%>
 <%@page import="com.itwillbs.member.MemberDAO"%>
@@ -30,4 +32,7 @@
 	// 회원 가입 완료 후 -> login.jsp로 페이지 이동
 	System.out.println("(from joinPro.jsp) 회원 가입 완 -> login.jsp로 이동");
 	response.sendRedirect("login.jsp");
-%>
+%> 
+
+
+--%>

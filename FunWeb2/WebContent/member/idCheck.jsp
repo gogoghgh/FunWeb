@@ -1,3 +1,4 @@
+<%-- 
 <%@page import="com.itwillbs.member.MemberBean"%>
 <%@page import="com.itwillbs.member.MemberDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -24,4 +25,6 @@
 	
 %>
 
-<%=result%>
+<%=result%> 
+
+--%>
