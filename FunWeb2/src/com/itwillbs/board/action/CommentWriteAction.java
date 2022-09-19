@@ -21,10 +21,10 @@ public class CommentWriteAction implements Action {
 //		response.setContentType("text/html; charset=UTF-8");
 //		PrintWriter out = response.getWriter();
 		
-		// 전달된 정보 저장(이름, 내용, b_bno..)
+		// 전달된 정보 저장(이름, 내용, bno..)
 		CommentDTO cdto = new CommentDTO();
 		
-		cdto.setB_bno(Integer.parseInt(request.getParameter("b_bno")));
+		cdto.setBno(Integer.parseInt(request.getParameter("bno")));
 		cdto.setName(request.getParameter("name"));
 		cdto.setContent(request.getParameter("content"));
 		
@@ -34,10 +34,14 @@ public class CommentWriteAction implements Action {
 		BoardDAO dao = new BoardDAO();
 		dao.insertComment(cdto);
 		
+		// BoardContent.bo 가려니까 bno== null이라고 자꾸 오류나네 ㄱ- 세션에 넣을까,,,, 주소줄에 붙ㅌ여서 보내야 하나
+		// bno 변수에 넣어서 주소줄에 같에 보내자
+		int bno = Integer.parseInt(request.getParameter("bno"));
+		
 		// 페이지 이동 정보 저장, forward 리턴
 		ActionForward forward = new ActionForward();
 		
-		forward.setPath("./BoardContent.bo");
+		forward.setPath("./BoardContent.bo?bno="+bno); // 되긴 되네????
 		forward.setRedirect(true); // 가상주소로 이동하니까 sendRedirect 방식으로 이동
 		
 		return forward;

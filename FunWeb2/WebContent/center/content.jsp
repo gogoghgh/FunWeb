@@ -1,8 +1,10 @@
+<%@page import="java.util.List"%>
+<%@page import="com.itwillbs.member.db.BoardDAO"%>
 <%@page import="com.itwillbs.member.db.CommentDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -105,7 +107,7 @@
 <!-- 					<input type="hidden" name="bno" value="1"> 댓글 수정, 삭제할 때 js 함수에서 value 변경,, -->
 <!-- 					<input type="hidden" name="exe" value="1"> exe:1(댓글 추가) -->
 					<input type="hidden" name="pageNum" value="${pageNum }"> <!-- 굳이 필요한감? -->
-					<input type="hidden" name="b_bno" value="${dto.bno }">  <!-- b_bno : 메인 글의 bno!! (BoardDTO의 bno!!!!) -->
+					<input type="hidden" name="bno" value="${dto.bno }">  <!-- bno : 메인 글의 bno!! (BoardDTO의 bno!!!!) 여기가 중요 ★★★-->
 					
 					<table>
 						<tr>
@@ -129,17 +131,29 @@
 				</form>
 				<!-- ----------------------- 댓글 작성 구간 끝^^ --------------------------------- -->
 				
+				<br>
+				<hr>
 				
 				
 				<!-- ----------------------- 댓글 리스트 구간 --------------------------------- -->
+				<%
+					BoardDAO dao = new BoardDAO();
+					int bno = Integer.parseInt(request.getParameter("bno"));
+					List<CommentDTO> cmtList = dao.getCommentList(bno);
+					request.setAttribute("cmtList", cmtList);
+				%>
+				
+						<input type="hidden" name="c_bno" value="${cdto.c_bno }">
 				<c:forEach var="cdto" items="${cmtList }">
-					<div class="cmtList">
-						<span class="bno">bno: ${cdto.bno }</span>
-						<span class="name">name: ${cdto.name }</span>
-						<span class="content">content: ${cdto.content }</span>
-						<input type="button" value="수정" onclick="location.href='#';">
-						<input type="button" value="삭제" onclick="location.href='#';">
-						
+					<table width="60%" style="border: 1px solid gray">
+						<tr>
+							<td> name: ${cdto.name } </td>
+							<td align="right"> <fmt:formatDate value="${cdto.date }" pattern="yyyy.MM.dd hh:mm"/>
+						</tr>
+						<tr height="60px">
+							<td colspan="2"> content: <br> ${cdto.content } </td>
+						</tr>
+					</table>
 <%-- 						<c:set var="cmtContent" value="${cdto.content }"/> --%>
 <%-- 						<c:set var="cmtContent" value="${fn:replace(cmtContent,rn,'<br>') }" /> --%>
 <!-- 						<span class="update"> -->
@@ -152,14 +166,14 @@
 <!-- 					</div> -->
 <%-- 						<span class="content">content: ${cdto.content }</span> --%>
 <%-- 						<span class="date">date: ${cdto.date }</span> --%>
-					</div>
 				</c:forEach>
+						<input type="button" value="수정" onclick="location.href='./CommentUpdate.bo?c_bno=${cdto.c_bno}';">
+						<input type="button" value="삭제" onclick="location.href='#';">
 				
 				<!-- ----------------------- 댓글 리스트 구간 끝^^ --------------------------------- -->
 				
 				
 				
-			</form>
 			<div class="clear"></div>
 			<div id="page_control"></div>
 		</article>

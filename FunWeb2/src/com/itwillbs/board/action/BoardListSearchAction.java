@@ -1,6 +1,5 @@
 package com.itwillbs.board.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,20 +9,23 @@ import com.itwillbs.member.action.Action;
 import com.itwillbs.member.action.ActionForward;
 import com.itwillbs.member.db.BoardDAO;
 import com.itwillbs.member.db.BoardDTO;
-import com.itwillbs.member.db.CommentDTO;
 
-public class BoardListAction implements Action {
+public class BoardListSearchAction implements Action {
 
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		System.out.println("(from BoardListAction) M: execute 메서드를 호출하셨나요^^");
+		System.out.println("(from BoardListSearchAction) M: execute 메서드를 호출하셨나요^^");
+		// 검색어 입력받은 값 가져와야 하니까 한글 처리
+		request.setCharacterEncoding("utf-8");
+		// 검색어 파라메타값 가져오기
+		String search = request.getParameter("search");
+		
 		
 		// DB에 대한 처리 할 거니까 DAO 객체 생성
 		BoardDAO dao = new BoardDAO();
 		
-		// 게시판에 작성되어 있는 전체 글 개수 (<- DAO 가서 getBoardCount 메서드 만들고 오기)
-		// cnt 변수에 저장
-		int cnt = dao.getBoardCount();
+		// 게시판에 작성되어 있는 전체 글 개수 (검색어 포함하는~~!!!! 전체 글의 개수)
+		int cnt = dao.getBoardCount(search);
 		
 		// 페이징 처리 -----------------------------------------------------------------------------
 		// 모르겠으면 외우기~~ ^_ㅠ
@@ -88,7 +90,7 @@ public class BoardListAction implements Action {
 //		List<BoardDTO> boardList = dao.getBoardList();
 		
 		// 모두 가져오지 말고,, 나눠서 가져오기 위한 메서드
-		List<BoardDTO> boardList = dao.getBoardList(startRow, pageSize); // 메서드 오버로딩!! 매개변수 다르게 하나 더 만들고 오자
+		List<BoardDTO> boardList = dao.getBoardList(startRow, pageSize, search); // 메서드 또 또 오버로딩!! 매개변수 다르게 하나 더 만들고 오자
 		
 		System.out.println("(from BoardListAction) M: 게시판 글 정보 저장 완"); ///???????????
 		
@@ -126,16 +128,6 @@ public class BoardListAction implements Action {
 		}
 		// 페이징 처리2 (하단 페이지 링크... 이전, 다음,, 1 2 3페이지ㅡ,,,,,) ---------------------------- 끝
 		
-		List<Integer> cmtList = new ArrayList<>();
-		
-		// 댓글 개수
-		for(int i = 0; i < boardList.size(); i++){
-			int bno = boardList.get(i).getBno();
-			System.out.println(bno);
-			System.out.println(dao.getCommentCount(bno));
-			cmtList.add(dao.getCommentCount(bno));
-		}
-		
 		
 		// Model(지금 여기.. Action) -> view 페이지로 boardList 정보 전달을 위해, request 영역에 저장
 		request.setAttribute("boardList", boardList);
@@ -143,8 +135,6 @@ public class BoardListAction implements Action {
 //		System.out.println("(from BoardListAction) M: BoardList: " + boardList.get(0).getBno());
 		System.out.println("(from BoardListAction) M: BoardList 정보 request 영역에 저장 완");
 //		System.out.println("(from BoardListAction) M: bno: " + boardList.); // 왜 얘는 콘솔에도 안 나옴? ㄱ-
-		
-		request.setAttribute("cmtList", cmtList);
 		
 		// + 페이징 처리 정보 전달을 위해 request 영역에 저장
 		request.setAttribute("pageNum", pageNum);
@@ -155,14 +145,17 @@ public class BoardListAction implements Action {
 		request.setAttribute("endPage", endPage);
 		System.out.println("(from BoardListAction) M: 페이징 처리 정보 request 영역에 저장 완");
 		
+		// ★★★ search 검색어 값 가져갈 수 있게 request에 저장 ★★★
+		request.setAttribute("search", search);
 		
 		// 받아온 list.. 화면에 출력하기!!  <<????????????
 		// 페이지 이동(화면 전환)하기 위해 ActionForward 객체 생성
 		ActionForward forward = new ActionForward();
-		forward.setPath("./center/notice.jsp"); // 갈 곳, 어떻게 갈지
+		forward.setPath("./center/noticeSearch.jsp"); // 갈 곳, 어떻게 갈지
 		forward.setRedirect(false); // 화면만 바뀌는 forward 방식으로 갈거니까 false.. 주소 안 변하면서 이동할거니까
 		
 		return forward;
+		
 	}
 
 }

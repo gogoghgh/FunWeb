@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.itwillbs.member.action.Action;
 import com.itwillbs.member.action.ActionForward;
-import com.itwillbs.member.action.MemberInsertAction;
 
 public class BoardFrontController extends HttpServlet{
 	protected void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -128,6 +127,33 @@ public class BoardFrontController extends HttpServlet{
 			
 		}// BoardUpdateProAction.bo 끝
 		
+		else if(command.equals("/BoardDelete.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: BoardDelete.bo 호출");
+			
+			action = new BoardDeleteAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}// BoardDelete.bo
+		
+		else if (command.equals("/BoardListSearch.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: BoardListSearch.bo 호출");
+			
+			action = new BoardListSearchAction();
+			
+			try {
+				forward = action.execute(request, response);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} // BoardListSearch.bo 끝
+		
+		
 		// 댓글 구현 시작////////////////////////////////////////
 		else if (command.equals("/CommentWrite.bo")){
 			System.out.println("(from BoardFrontController_doProcess) C: /CommentWrite.bo 호출");
@@ -141,9 +167,26 @@ public class BoardFrontController extends HttpServlet{
 				e.printStackTrace();
 			}
 			
-		} // CommentWrite.bo
+		} // CommentWrite.bo 끝
+		
+		else if (command.equals("/CommentUpdate.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: /CommentUpdate.bo 호출");
+			
+			action = new CommentUpdateAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		} // CommentUpdate.bo 끝
+		
+		
 		
 		// 댓글 구현 끝////////////////////////////////////////
+		
+		
 		
 		System.out.println("\n3. 가상 주소 이동 시작-------------------------------------------------");
 		if(forward != null){

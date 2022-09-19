@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>notice.jsp</title>
+<title>noticeSearch.jsp</title>
 <link href="./css/default.css" rel="stylesheet" type="text/css">
 <link href="./css/subpage.css" rel="stylesheet" type="text/css">
 <!--[if lt IE 9]>
@@ -55,7 +55,7 @@
 
 		<!-- 게시판 -->
 		<article>
-			<h1>Notice</h1>
+			<h1>Notice Search</h1>
 			<table id="notice">
 				<tr>
 					<th class="tno">No.</th>
@@ -65,25 +65,22 @@
 					<th class="tread">Read</th>
 				</tr>
 				
-				<c:forEach var="dto" items="${boardList }" varStatus="status">
-															<!-- // forEach의 상태용 변수 -->
-				
+				<c:forEach var="dto" items="${boardList }">
 					<tr>
 						<td>${dto.bno }</td>
+						<td class="left"><a href="./BoardContent.bo?bno=${dto.bno }"> 
+										${dto.subject } &nbsp; [   ] </a></td>
 								 <c:set var="bno" value="${dto.bno }"/> 
-								<%-- <%
+								 
+								
+								<%
 									// 제목 옆에 댓글 수 출력하기
 									// bno를 매개변수로 넣어서 getCommentCount 메서드 호출해야 함!!!! 그걸 int cnt에 저장해야 함,,
 									// bno는 어디에 있남? 
 									// request영역에 있는 -> boardList 안에,, -> dto 안에,, -> bno
 									
 									BoardDAO dao = new BoardDAO();
-									
-									int bno = (int)pageContext.getAttribute("bno"); // JSTL에서 선언한 변수 이렇게 하면 쓸 수 있긴 한데,, 비추?
-									System.out.println("bno: " + bno);
-									int cnt = dao.getCommentCount(bno);
-									System.out.println("cnt: " + cnt);
-									
+// 									dao.getCommentCount(bno);
 									
 									// 일단 request 영역에서 bno 빼내기
 // 									int bno = Integer.parseInt(request.getParameter("bno"));
@@ -95,11 +92,7 @@
 						// 			List<BoardDTO> boardList = request.getParameter("boardList"); // BoardListAction에서 request 영역에 얘를 저장해놨네!! 근데 안 되네ㅠ
 // 									int cnt = dao.getCommentCount(${bno});
 								
-								%> --%>
-						<td class="left"><a href="./BoardContent.bo?bno=${dto.bno }"> 
-										${dto.subject } &nbsp;  [ ${cmtList[status.index] }  ] </a></td>
-								 										<!--   그 상태의 -> index.. 0, 1, 2, ,,, -->
-								
+								%>
 						<td>${dto.name }</td>
 						<td><fmt:formatDate value="${dto.date }" pattern="yyyy.MM.dd"/> </td>
 						<td>${dto.readcount }</td>
@@ -129,18 +122,18 @@
 				
 				<c:if test="${startPage gt pageBlock }">
 							<!-- startPage가 10보다 크면?! Prev 글자 보이게-->
-					<a href="./BoardList.bo?pageNum=${startPage - pageBlock }">Prev</a> 
+					<a href="./BoardListSearch.bo?pageNum=${startPage - pageBlock }&search=${search}">Prev</a> 
 				</c:if>
 				
 				
 				<c:forEach var="i" begin="${startPage }" end="${endPage }" step="1">
-					<a href="./BoardList.bo?pageNum=${i }">${i }</a>
+					<a href="./BoardListSearch.bo?pageNum=${i }&search=${search}">${i }</a>
 				</c:forEach>
 
 				 
 				<c:if test="${endPage gt pageCount }">
 							<!-- endPage가 pageCount보다 더 크면? 다음에 넘어갈 페이지가 있다~ == Next 보여야 함 -->
-					<a href="./BoardList.bo?pageNum=${startPage + pageBlock }">Next</a> 
+					<a href="./BoardListSearch.bo?pageNum=${startPage + pageBlock }&search=${search}">Next</a> 
 				</c:if>
 			</div>
 			

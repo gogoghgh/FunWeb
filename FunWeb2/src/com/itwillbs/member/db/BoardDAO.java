@@ -25,7 +25,7 @@ public class BoardDAO {
 	
 	// 기본 생성자
 	public BoardDAO() {
-		System.out.println("(from BoardDAO) DB 연결에 관한 모든 준비 완^^ ");
+//		System.out.println("(from BoardDAO) DB 연결에 관한 모든 준비 완^^ ");
 	}
 	
 	
@@ -277,6 +277,44 @@ public class BoardDAO {
 	// 3. 글 개수 조회(all) - getBoardCount() 끝///////////////////////////////////////////
 	
 	
+	// 3-1. 글 개수 조회(all) - getBoardCount(search) 끝///////////////////////////////////////////
+	public int getBoardCount(String search){
+		System.out.println("\n(from BoardDAO_3-1.getBoardCount) C: getBoardCount(search) 호출");
+		int cnt = 0;
+		
+		try {
+			// 1+2. 디비 연결(커넥션 풀 이용) + 6. closeDB
+			con = getConnect();
+			
+			// 3. sql 작성 & pstmt & ?
+			sql = "select count(*) "
+					+ "from itwill_board "
+					+ "where subject like ? ";
+								//   like '%검색어%';
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, "%" + search + "%");
+			
+			// 4. sql 실행 + rs
+			rs = pstmt.executeQuery();
+			
+			// 5. 데이터 처리 (select날리니까)
+			if(rs.next()){ // rs에 데이터가 있을 때~
+				cnt = rs.getInt(1); // 1번 컬럼(=count(*)) 값을 cnt에 저장쓰
+			}
+			
+			System.out.println("(from BoardDAO_3-1.getBoardCount) C: 글 개수는 총 " + cnt + "개^^");
+			
+		} catch (Exception e) { 
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+		
+		return cnt;
+	}
+	// 3-1. 글 개수 조회(all) - getBoardCount(search) 끝///////////////////////////////////////////
+	
+	
 	// 2-1. 글 목록 조회(all 아니고 내가 원하는 만큼만) - getBoardList(startRow, pageSize) 오버로딩!!!!!
 	public List<BoardDTO> getBoardList(int startRow, int pageSize){
 		System.out.println("\n(from BoardDAO_2-1.getBoardList) C: getBoardList(sr, ps) 호출");
@@ -347,6 +385,79 @@ public class BoardDAO {
 		
 	}	
 	// 2-1. 글 목록 조회(all 아니고 내가 원하는 만큼만) - getBoardList(startRow, pageSize) 끝//////////////////////////////////////
+
+	
+	// 2-2. 검색어 포함 글 목록 조회 - getBoardList(startRow, pageSize, search)
+	public List<BoardDTO> getBoardList(int startRow, int pageSize, String search){
+		System.out.println("\n(from BoardDAO_2-2.getBoardList) C: getBoardList(sr, ps, search) 호출");
+
+		// 글 정보 모~~~두를 저장하는 배열 (가변길이!! 고정길이 배열 BoardDTO[] 말고)
+		List<BoardDTO> boardList = new ArrayList<BoardDTO>();
+		
+		try {
+			// 1+2
+			con = getConnect();
+
+			// 3 sql & pstmt & ?
+			
+			// limit 시작행-1, 들고 올 개수 : 시작 지점부터 해당 개수만큼 짤라오기!!!
+			// 정렬: re_ref 이용해서 내림차순으로 정렬.. re_ref = bno = 큰-> 작..  = 최신 -> 구
+			//     : re_seq 이용해서 오름차순으로 정렬 1, 2, 3...
+			//   ㄴ 최신글이 제일 위에 오도록!!!! 모르겠으면 쿼리 날려서 직접 보삼
+			sql =     "select * from itwill_board "
+					+ "where subject like ? " // 여기 추가!!!!!!!!!!
+					+ "order by re_ref desc, re_seq asc "
+					+ "limit ?, ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			// ? 처리
+			pstmt.setString(1, "%" + search + "%");  // 여기 추가!!!!!!!!!!
+			pstmt.setInt(2, startRow-1); // DB에서 인덱스 0부터 시작하니까,, -1 --> 시작행-1
+			pstmt.setInt(3, pageSize); // 몇 개씩 보여줄거? 매개변수로 받아온 pageSize만큼
+			// 이 밑에부터는 똑같음~~~~~~~~~
+			
+			// 4 sql 실행 & 날려서 가져온 결과값 rs에 담기
+			rs = pstmt.executeQuery();
+			
+			// 5 데이터 처리
+			while(rs.next()){
+				// rs에 데이터 결과값 RecordSet 있을 때!! 이걸 화면에 출력해줘야 하는데 어떡한담~~
+				// 이 정보를 바로 배열로는 못 넣고,, DB에 저장된 정보 -> DTO에 저장 -> List에 저장 
+				// ArrayList에 ㅁㅁㅁㅁㅁ
+				//              ㄴㄴㄴㄴㄴ DTO 필통에 저장 먼저!!!
+				BoardDTO dto = new BoardDTO();
+				dto.setBno(rs.getInt(1));
+				dto.setName(rs.getString("name"));
+				dto.setPass(rs.getString(3));
+				dto.setSubject(rs.getString(4));
+				dto.setContent(rs.getString(5));
+				dto.setReadcount(rs.getInt("readcount"));
+				dto.setRe_ref(rs.getInt(7));
+				dto.setRe_lev(rs.getInt(8));
+				dto.setRe_seq(rs.getInt(9));
+				dto.setDate(rs.getDate(10));
+				dto.setIp(rs.getString("ip"));
+				dto.setFile(rs.getString("file"));
+				
+				// DTO필통 -> List에 저장쓰
+				boardList.add(dto);
+				
+			} // while
+			System.out.println("(from BoardDAO_2-2.getBoardList) C: List에 저장 완");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			// 6
+			closeDB();
+		}
+		
+		return boardList;
+		
+	}	
+	// 2-2. 검색어 포함 글 목록 조회 - getBoardList(startRow, pageSize, search) 끝
 	
 	
 	// 4. 글 조회수 1 증가 updateReadcount(bno)
@@ -380,6 +491,7 @@ public class BoardDAO {
 
 	}
 	// 4. 글 조회수 1 증가 updateReadcount(bno) 끝 //////////////////////////////////////////////////////////
+	
 	
 	// 5. 특정 글 1개의 정보 조회 getBoard(bno)
 	public BoardDTO getBoard(int bno){
@@ -506,8 +618,8 @@ public class BoardDAO {
 	
 	
 	// 댓글 구현 //////////////////////////////////////////////////////////////
-	// 7. getOne(bno) 메서드  comment 테이블의 bno로 데이터 한 개 가져오기 
-	public CommentDTO getOneComment(int bno) {
+	// 7. getOne(c_bno) 메서드  comment 테이블의 c_bno로 데이터 한 개 가져오기 
+	public CommentDTO getOneComment(int c_bno) {
 		System.out.println("(from BoardDAO_7.getOneComment) getOneComment 메서드 호출됨");
 		
 		CommentDTO cdto = new CommentDTO();
@@ -517,11 +629,11 @@ public class BoardDAO {
 			con = getConnect();
 			
 			// 3. sql & pstmt & ?
-			sql = "select * from board_comment where bno=?";
+			sql = "select * from board_comment where c_bno=?";
 			
 			pstmt = con.prepareStatement(sql);
 			
-			pstmt.setInt(1, bno);
+			pstmt.setInt(1, c_bno);
 			
 			// 4. sql 실행 & rs에 담기
 			rs = pstmt.executeQuery();
@@ -529,8 +641,8 @@ public class BoardDAO {
 			// 5. rs에 담긴 데이터 처리
 			if (rs.next()){
 				
+				cdto.setC_bno(rs.getInt("c_bno"));
 				cdto.setBno(rs.getInt("bno"));
-				cdto.setB_bno(rs.getInt("b_bno"));
 				cdto.setName(rs.getString("name"));
 				cdto.setContent(rs.getString("content"));
 				cdto.setDate(rs.getTimestamp("date"));
@@ -555,13 +667,13 @@ public class BoardDAO {
 			
 			// 3. sql & pstmt & ?
 			sql = "update board_comment "
-					+ "set name=?, content=?, where bno=?";
+					+ "set name=?, content=?, where c_bno=?";
 			
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, cdto.getName());
 			pstmt.setString(2, cdto.getContent());
-			pstmt.setInt(3, cdto.getBno());
+			pstmt.setInt(3, cdto.getC_bno());
 			
 			// 4. sql 실행
 			pstmt.executeUpdate();
@@ -578,7 +690,7 @@ public class BoardDAO {
 	
 	
 	// 7-2. deleteComment
-	public void deleteComment(int bno) {
+	public void deleteComment(int c_bno) {
 		System.out.println("(from BoardDAO_7-2.deleteComment) deleteComment 메서드 호출됨");
 		
 		try {
@@ -587,16 +699,16 @@ public class BoardDAO {
 			
 			// 3. sql & pstmt & ?
 			sql = "delete from board_comment "
-					+ "where bno=?";
+					+ "where c_bno=?";
 			
 			pstmt = con.prepareStatement(sql);
 			
-			pstmt.setInt(1, bno);
+			pstmt.setInt(1, c_bno);
 			
 			// 4. sql 실행
 			pstmt.executeUpdate();
 			
-			System.out.println("(from BoardDAO_7-2.deleteComment) 댓글 삭제 완 bno:" + bno);
+			System.out.println("(from BoardDAO_7-2.deleteComment) 댓글 삭제 완 c_bno:" + c_bno);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -616,14 +728,14 @@ public class BoardDAO {
 			con = getConnect();
 			
 			// 3. sql & pstmt & ?
-			sql = "insert into board_comment (name, content, b_bno) "
+			sql = "insert into board_comment (name, content, bno) "
 					+ "values(?, ?, ?)";
 			
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, cdto.getName());
 			pstmt.setString(2, cdto.getContent());
-			pstmt.setInt(3, cdto.getB_bno());
+			pstmt.setInt(3, cdto.getBno());
 			
 			// 4. sql 실행
 			pstmt.executeUpdate();
@@ -648,7 +760,7 @@ public class BoardDAO {
 			con = getConnect();
 			
 			// 3. sql & pstmt & ?
-			sql = "select count(*) from board_comment where b_bno=?"; // board Table의 bno에 속한 -> comment Table의 bno니까,,
+			sql = "select count(*) from board_comment where bno=?"; // board Table의 bno에 속한 -> comment Table의 bno니까,,
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, bno);
 			
@@ -674,7 +786,7 @@ public class BoardDAO {
 	
 	
 	// 7-5. getCommentList 한 게시물의 댓글 리스트 출력하는 메서드
-	public List<CommentDTO> getCommentList(int b_bno){
+	public List<CommentDTO> getCommentList(int bno){
 		System.out.println("\n(from BoardDAO_7-5.getCommentList) C: getCommentList() 호출됨");
 
 		List<CommentDTO> cmtList = new ArrayList<CommentDTO>();
@@ -684,9 +796,9 @@ public class BoardDAO {
 			con = getConnect();
 
 			// 3 sql & pstmt & ?
-			sql = "select * from board_comment where b_bno=? order by bno desc";
+			sql = "select * from board_comment where bno=? order by c_bno desc";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, b_bno);
+			pstmt.setInt(1, bno);
 			
 			// 4 sql 실행 & 날려서 가져온 결과값 rs에 담기
 			rs = pstmt.executeQuery();
@@ -695,8 +807,8 @@ public class BoardDAO {
 			while(rs.next()){
 				// 이 정보를 바로 배열로는 못 넣고,, DB에 저장된 정보 -> DTO 필통에 저장해서!! -> List에 저장 
 				CommentDTO cdto = new CommentDTO();
+				cdto.setC_bno(rs.getInt("c_bno"));
 				cdto.setBno(rs.getInt("bno"));
-				cdto.setB_bno(rs.getInt("b_bno"));
 				cdto.setName(rs.getString("name"));
 				cdto.setContent(rs.getString("content"));
 				cdto.setDate(rs.getTimestamp("date"));
@@ -719,6 +831,72 @@ public class BoardDAO {
 		
 	}	
 	// 7-5. getCommentList 한 게시물의 댓글 리스트 출력하는 메서드 끝
+	
+	
+	// 8. 글 삭제 deleteBoard(dto) 메서드 시작 ////////////////////////////////////////////////////////
+	public int deleteBoard(BoardDTO dto){
+		System.out.println("\n(from BoardDAO_8.deleteBoard) C: deleteBoard() 호출됨");
+		int result = -1;
+		// result = 1 본인 인증 완 -> 글 수정 성공 
+		//        = 0 비번 틀림,, 본인 X
+		//        = -1 게시판에 글 없다 ㄷㄷㄷ
+		
+		try {
+			// 1. 2. DB 연결   + 6. closeDB
+			con = getConnect();
+			
+			// 3. sql 작성 & pstmt & ?
+			sql = "select pass from itwill_board where bno=?";
+						// pk가 걸려있는 bno에 해당하는 pass 가 있다면,, 글은 존재하는 거다~~ 
+						// bno에 해당하는 pass가 없다? 비번 틀린 거? ㄴㄴ
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, dto.getBno());
+			
+			// 4. sql 실행 & rs에 담기
+			rs = pstmt.executeQuery();
+			
+			// 5. rs에 담긴 데이터 처리
+			if(rs.next()){
+				// 데이터 있을 때~ 
+				// 비번 다시 확인
+				if(dto.getPass().equals(rs.getString("pass"))){
+					// db에서 가져온(rs에 담긴) pass랑 -- dto에 있는 pass랑 비교
+					// 비번 같으면~ == 게시판에 글도 있고, 비번도 맞더라~~ == 본인이 쓴 글 맞다~~
+					// 여기서!!!!! 수정 가능하게~~~~~~~~~~~~~~~~~~
+					// 3. sql & pstmt & ?
+					sql = "delete from itwill_board "
+							+ "where bno=? ";
+					
+					pstmt = con.prepareStatement(sql);
+					
+					pstmt.setInt(1, dto.getBno());
+					
+					// 4. sql 실행
+					result = pstmt.executeUpdate(); 
+								// executeUpdate 실행하고 나면 정수형 데이터(쿼리 날린 결과, 몇 row가 영향을 받았냐) 리턴함!!! 
+								// 근데 여기선 무조건 1row니까~ 1이 리턴되는고 
+				} else {
+					// 비번 다름
+					result = 0;
+				}// 안에 if-else
+
+			} else {
+				// bno에 해당하는 비번이 없다~~ = 게시판에 글이 없다~~~
+				result = -1;
+			}
+			System.out.println("(from BoardDAO_6.updateBoard) 글 수정 완 result: " + result);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			closeDB();
+		}
+		
+		return result;
+	}
+	// 8. 글 삭제 deleteBoard(dto) 메서드 끝 ////////////////////////////////////////////////////////
+	
 	
 	
 }// BoardDAO class
