@@ -153,6 +153,55 @@ public class BoardFrontController extends HttpServlet{
 			}
 		} // BoardListSearch.bo 끝
 		
+		else if (command.equals("/FileBoardWrite.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: FileBoardWrite.bo 호출");
+			
+			forward = new ActionForward();
+			forward.setPath("./center/fwrite.jsp");
+			forward.setRedirect(false); // Redirect 방식이냐? ㄴㄴ 아니다~ =forward방식으로 갈 것이다~~~
+			
+		} // FileBoardWrite.bo 끝
+		
+		else if (command.equals("/FileBoardWriteAction.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: FileBoardWriteAction.bo 호출");
+			
+			action = new FileBoardWriteAction();
+			
+			try {
+				forward = action.execute(request, response);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		} // FileBoardWriteAction.bo 끝
+		
+		else if (command.equals("/FileBoardUpdate.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: FileBoardUpdate.bo 호출");
+			
+			action = new FileBoardUpdateAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} // FileBoardUpdate.bo 끝
+		
+		else if (command.equals("/FileBoardUpdatePro.bo")){
+			System.out.println("(from BoardFrontController_doProcess) C: FileBoardUpdate.bo 호출");
+			
+			action = new FileBoardUpdateProAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} // FileBoardUpdatePro.bo 끝
+		
+		
+		
 		
 		// 댓글 구현 시작////////////////////////////////////////
 		else if (command.equals("/CommentWrite.bo")){

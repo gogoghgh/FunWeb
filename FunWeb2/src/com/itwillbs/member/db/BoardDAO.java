@@ -580,7 +580,7 @@ public class BoardDAO {
 					// 여기서!!!!! 수정 가능하게~~~~~~~~~~~~~~~~~~
 					// 3. sql & pstmt & ?
 					sql = "update itwill_board "
-							+ "set name=?, subject=?, content=? "
+							+ "set name=?, subject=?, content=?, file=? "
 							+ "where bno=? ";
 					
 					pstmt = con.prepareStatement(sql);
@@ -588,7 +588,8 @@ public class BoardDAO {
 					pstmt.setString(1, dto.getName());
 					pstmt.setString(2, dto.getSubject());
 					pstmt.setString(3, dto.getContent());
-					pstmt.setInt(4, dto.getBno());
+					pstmt.setString(4, dto.getFile());
+					pstmt.setInt(5, dto.getBno());
 					
 					// 4. sql 실행
 					result = pstmt.executeUpdate(); 

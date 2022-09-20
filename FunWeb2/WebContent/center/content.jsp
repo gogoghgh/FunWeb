@@ -40,7 +40,7 @@
 
 		<!-- 게시판 -->
 		<article>
-			<h1>Notice Write</h1>
+			<h2>파일 업로드 하실 줄 아시는 분 구함!@@@@2 <br> 돈 드려요 ㅋ </h2>
 <!-- 			<form action="./BoardWriteAction.bo" method="get"> -->
 <!-- 										<input type="hidden" name="pass" value="1234"> -->
 				<table id="notice">
@@ -62,7 +62,19 @@
 					</tr>
 					<tr>
 						<td>내용</td>
-						<td>${dto.content } </td>
+						<td height="100px">${dto.content } </td>
+					</tr>
+					<tr>
+						<td>파일💾🎉</td>
+						
+						<td>
+							<c:if test="${dto.file ne null }" >  
+								<a href="./upload/${dto.file }" download> 
+								<img src="./upload/${dto.file }"> </a>
+							</c:if>
+						</td>
+						
+						
 					</tr>
 
 				</table>
@@ -72,6 +84,9 @@
 						<!-- 로그인 한 사람이랑 글쓴이가 일치하면~ ★★★★★★  -->
 						<input type="button" value="글 수정" class="btn" 
 								onclick="location.href='./BoardUpdate.bo?bno=${dto.bno}';">
+						
+						<input type="button" value="글 수정(파일)" class="btn" 
+								onclick="location.href='./FileBoardUpdate.bo?bno=${dto.bno}';">
 												
 						<input type="button" value="글 삭제" class="btn" 
 								onclick="location.href='./BoardDelete.bo?bno=${dto.bno}';">
@@ -82,7 +97,7 @@
 				<br>
 				<br>
 				
-				<!-- ----------------------- 댓글 작성 구간^^ --------------------------------- -->
+				<!-- ----------------------- 댓글 작성 구간^^ 시작 --------------------------------- -->
 				
 				<!-- 댓글 수정, 삭제를 위하여 기존 값을 form 태그로 넘김 -->
 <!-- 				<script type="text/javascript">

@@ -55,7 +55,7 @@
 
 		<!-- 게시판 -->
 		<article>
-			<h1>Notice</h1>
+			<h2>공지: 정후 사진 보면 넘 설레니까 업로드 금지임🙅‍♀️🙅‍♀️ 정후 불매  </h2>
 			<table id="notice">
 				<tr>
 					<th class="tno">No.</th>

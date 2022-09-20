@@ -126,9 +126,11 @@ public class BoardListAction implements Action {
 		}
 		// 페이징 처리2 (하단 페이지 링크... 이전, 다음,, 1 2 3페이지ㅡ,,,,,) ---------------------------- 끝
 		
-		List<Integer> cmtList = new ArrayList<>();
 		
 		// 댓글 개수
+
+		List<Integer> cmtList = new ArrayList<>();
+		
 		for(int i = 0; i < boardList.size(); i++){
 			int bno = boardList.get(i).getBno();
 			System.out.println(bno);
