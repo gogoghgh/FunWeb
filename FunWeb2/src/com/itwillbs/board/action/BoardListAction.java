@@ -138,6 +138,7 @@ public class BoardListAction implements Action {
 			cmtList.add(dao.getCommentCount(bno));
 		}
 		
+		request.setAttribute("cmtList", cmtList);
 		
 		// Model(지금 여기.. Action) -> view 페이지로 boardList 정보 전달을 위해, request 영역에 저장
 		request.setAttribute("boardList", boardList);
@@ -146,7 +147,6 @@ public class BoardListAction implements Action {
 		System.out.println("(from BoardListAction) M: BoardList 정보 request 영역에 저장 완");
 //		System.out.println("(from BoardListAction) M: bno: " + boardList.); // 왜 얘는 콘솔에도 안 나옴? ㄱ-
 		
-		request.setAttribute("cmtList", cmtList);
 		
 		// + 페이징 처리 정보 전달을 위해 request 영역에 저장
 		request.setAttribute("pageNum", pageNum);
