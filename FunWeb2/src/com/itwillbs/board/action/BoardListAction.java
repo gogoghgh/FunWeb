@@ -34,7 +34,7 @@ public class BoardListAction implements Action {
 		// 한 페이지에 보여줄 글의 개수 설정
 		String urlpageSize = request.getParameter("pageSize"); // 네이버 쇼핑처럼 ㅎ
 			if(urlpageSize == null) {
-				urlpageSize = "15"; 
+				urlpageSize = "50"; 
 			}
 		
 	  //int pageSize = 5; // 내가 개수 딱 정해놓는거    // 구
